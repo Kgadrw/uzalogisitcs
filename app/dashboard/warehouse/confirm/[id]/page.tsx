@@ -48,7 +48,6 @@ export default function ConfirmGoodsPage() {
     // Mock submission - replace with API call
     console.log('Updating shipment status:', { 
       shipmentId: id, 
-      status: formData.status,
       ...formData 
     });
     alert(`Shipment status updated to "${formData.status}" and client notified!`);
