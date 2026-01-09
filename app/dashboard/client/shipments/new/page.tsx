@@ -15,6 +15,7 @@ export default function NewShipmentPage() {
     // Step 1: Goods Details
     productName: '',
     productCategory: '',
+    productCategoryOther: '', // For "Other" category specification
     quantity: '',
     estimatedWeight: '',
     estimatedVolume: '',
@@ -147,7 +148,13 @@ export default function NewShipmentPage() {
           <label className="block text-primary mb-2">Product Category</label>
           <select
             value={formData.productCategory}
-            onChange={(e) => handleInputChange('productCategory', e.target.value)}
+            onChange={(e) => {
+              handleInputChange('productCategory', e.target.value);
+              // Clear other category field if not "other"
+              if (e.target.value !== 'other') {
+                handleInputChange('productCategoryOther', '');
+              }
+            }}
             className="w-full border border-primary border-opacity-20 p-3 text-primary bg-secondary"
             required
           >
@@ -158,6 +165,19 @@ export default function NewShipmentPage() {
             <option value="food">Food</option>
             <option value="other">Other</option>
           </select>
+          {formData.productCategory === 'other' && (
+            <div className="mt-3">
+              <label className="block text-primary mb-2">Specify Category</label>
+              <input
+                type="text"
+                value={formData.productCategoryOther}
+                onChange={(e) => handleInputChange('productCategoryOther', e.target.value)}
+                className="w-full border border-primary border-opacity-20 p-3 text-primary bg-secondary"
+                placeholder="Enter product category"
+                required
+              />
+            </div>
+          )}
         </div>
         
         <div className="grid grid-cols-2 gap-4">
@@ -364,48 +384,6 @@ export default function NewShipmentPage() {
 
   const step3 = (
     <Card>
-      <h3 className="text-primary text-xl mb-4">Select Warehouse</h3>
-      <div className="space-y-4">
-        {warehouses.map((warehouse) => (
-          <div
-            key={warehouse.id}
-            className={`border border-primary border-opacity-20 p-4 cursor-pointer ${
-              formData.selectedWarehouse?.id === warehouse.id
-                ? 'border-primary'
-                : 'hover:border-primary hover:border-opacity-50'
-            }`}
-            onClick={() => handleInputChange('selectedWarehouse', warehouse)}
-          >
-            <div className="flex justify-between items-start mb-2">
-              <div>
-                <h4 className="text-primary text-lg">{warehouse.name}</h4>
-                <p className="text-primary text-opacity-70">{warehouse.location}</p>
-              </div>
-              <div className="text-primary">Rating: {warehouse.rating}</div>
-            </div>
-            <div className="mt-2 space-y-1">
-              <p className="text-primary text-sm">Available Storage: {warehouse.capacity}</p>
-              <p className="text-primary text-sm">Price per CBM: {formatCurrency(warehouse.pricePerCBM)}</p>
-              <p className="text-primary text-sm">Services: {warehouse.services.join(', ')}</p>
-            </div>
-            <button
-              className="mt-4 flex items-center gap-2 px-4 py-2 bg-primary text-secondary hover:bg-opacity-90"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleInputChange('selectedWarehouse', warehouse);
-              }}
-            >
-              <HiOutlineCheckCircle className="w-4 h-4 text-blue-500" />
-              <span>Select Warehouse</span>
-            </button>
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
-
-  const step4 = (
-    <Card>
       <h3 className="text-primary text-xl mb-4">Cost Summary</h3>
       {formData.selectedWarehouse ? (
         <>
@@ -451,12 +429,54 @@ export default function NewShipmentPage() {
 
   return (
     <div>
+      {/* Warehouse Selection Dropdown */}
+      <Card className="mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <label className="block text-primary mb-2 font-medium">
+              Select Warehouse <span className="text-red-500">*</span>
+            </label>
+            <p className="text-primary text-sm text-opacity-70 mb-3">
+              Please select a warehouse for your shipment
+            </p>
+            <select
+              value={formData.selectedWarehouse?.id || ''}
+              onChange={(e) => {
+                const warehouse = warehouses.find(w => w.id === e.target.value);
+                handleInputChange('selectedWarehouse', warehouse || null);
+              }}
+              className="w-full md:w-96 border border-primary border-opacity-20 p-3 text-primary bg-secondary"
+              required
+            >
+              <option value="">Select a warehouse</option>
+              {warehouses.map((warehouse) => (
+                <option key={warehouse.id} value={warehouse.id}>
+                  {warehouse.name} - {warehouse.location} ({formatCurrency(warehouse.pricePerCBM)}/CBM)
+                </option>
+              ))}
+            </select>
+          </div>
+          {formData.selectedWarehouse && (
+            <div className="ml-4 p-4 bg-primary bg-opacity-5 rounded border border-primary border-opacity-20">
+              <p className="text-primary text-sm font-medium mb-1">Selected:</p>
+              <p className="text-primary font-semibold">{formData.selectedWarehouse.name}</p>
+              <p className="text-primary text-sm text-opacity-70">{formData.selectedWarehouse.location}</p>
+              <button
+                onClick={() => handleInputChange('selectedWarehouse', null)}
+                className="mt-2 text-primary text-sm underline hover:text-opacity-70"
+              >
+                Clear selection
+              </button>
+            </div>
+          )}
+        </div>
+      </Card>
+
       <StepForm
         steps={[
           { title: 'Goods Details', component: step1 },
           { title: 'Location', component: step2 },
-          { title: 'Warehouse', component: step3 },
-          { title: 'Summary', component: step4 },
+          { title: 'Summary', component: step3 },
         ]}
         onSubmit={handleSubmit}
         submitLabel="Confirm and Submit Shipment"

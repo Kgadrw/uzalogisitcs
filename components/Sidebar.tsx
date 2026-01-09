@@ -104,13 +104,15 @@ export default function Sidebar({ role, onToggle }: SidebarProps) {
     >
       <div className={`p-6 ${isCollapsed ? 'px-4' : ''}`}>
         <div className={`mb-8 flex items-center gap-2 ${isCollapsed ? 'justify-center' : ''}`}>
-          <Image 
-            src="/logo.png" 
-            alt="Logistics" 
-            width={isCollapsed ? 32 : 40} 
-            height={isCollapsed ? 32 : 40}
-            className="flex-shrink-0"
-          />
+          <div className={`flex-shrink-0 ${isCollapsed ? 'w-8 h-8' : 'w-10 h-10'}`}>
+            <Image 
+              src="/logo.png" 
+              alt="Logistics" 
+              width={40} 
+              height={40}
+              className="w-full h-full object-contain"
+            />
+          </div>
           {!isCollapsed && <h1 className="text-secondary text-xl">Logistics</h1>}
         </div>
         

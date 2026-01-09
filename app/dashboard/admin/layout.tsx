@@ -65,6 +65,22 @@ export default function AdminDashboardLayout({
     return '16rem';
   };
 
+  // Prevent hydration mismatch by ensuring consistent initial render
+  if (!mounted) {
+    return (
+      <div className="flex min-h-screen bg-secondary">
+        <Sidebar role="admin" onToggle={setSidebarCollapsed} />
+        <div 
+          className="flex-1 flex flex-col transition-all duration-300"
+          style={{ marginLeft: '16rem' }}
+        >
+          <Topbar title={getPageTitle()} role="admin" userName={user.name} />
+          <main className="flex-1 p-4 md:p-6 overflow-y-auto">{children}</main>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen bg-secondary">
       <Sidebar role="admin" onToggle={setSidebarCollapsed} />
