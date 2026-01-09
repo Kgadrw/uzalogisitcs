@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { setCurrentUser } from '@/lib/auth';
-import { HiOutlineTruck, HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineArrowRightOnRectangle } from 'react-icons/hi2';
+import { HiOutlinePaperAirplane, HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineArrowRightOnRectangle } from 'react-icons/hi2';
 
 export default function WarehouseLoginPage() {
   const router = useRouter();
@@ -29,7 +29,7 @@ export default function WarehouseLoginPage() {
     <div className="min-h-screen bg-secondary flex items-center justify-center p-4">
       <div className="w-full max-w-md border border-primary border-opacity-20 p-8">
         <div className="flex items-center justify-center gap-2 mb-4">
-          <HiOutlineTruck className="w-8 h-8 text-primary" />
+          <HiOutlinePaperAirplane className="w-8 h-8 text-primary" />
           <h1 className="text-primary text-3xl">Uza Logistics</h1>
         </div>
         <p className="text-primary text-opacity-70 text-center mb-2">Warehouse Partner Portal</p>

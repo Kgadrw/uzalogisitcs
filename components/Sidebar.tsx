@@ -13,9 +13,10 @@ import {
   HiOfficeBuilding,
   HiCube,
   HiPhone,
-  HiTruck as TruckIcon,
+  HiPaperAirplane,
   HiMenu,
-  HiX
+  HiX,
+  HiCurrencyDollar
 } from 'react-icons/hi';
 
 interface SidebarProps {
@@ -40,6 +41,7 @@ const adminNavItems = [
   { href: '/dashboard/admin/warehouses', label: 'Warehouse Management', icon: HiOfficeBuilding },
   { href: '/dashboard/admin/shipments', label: 'All Shipments', icon: HiCube },
   { href: '/dashboard/admin/assisted', label: 'Assisted Delivery', icon: HiPhone },
+  { href: '/dashboard/admin/pricing', label: 'Pricing Management', icon: HiCurrencyDollar },
 ];
 
 export default function Sidebar({ role, onToggle }: SidebarProps) {
@@ -102,7 +104,7 @@ export default function Sidebar({ role, onToggle }: SidebarProps) {
     >
       <div className={`p-6 ${isCollapsed ? 'px-4' : ''}`}>
         <div className={`mb-8 flex items-center gap-2 ${isCollapsed ? 'justify-center' : ''}`}>
-          <TruckIcon className="w-6 h-6 text-secondary flex-shrink-0" />
+          <HiPaperAirplane className="w-6 h-6 text-secondary flex-shrink-0" />
           {!isCollapsed && <h1 className="text-secondary text-xl">Uza Logistics</h1>}
         </div>
         

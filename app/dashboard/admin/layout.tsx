@@ -45,6 +45,7 @@ export default function AdminDashboardLayout({
     if (pathname === '/dashboard/admin/warehouses') return 'Warehouse Management';
     if (pathname === '/dashboard/admin/shipments') return 'All Shipments';
     if (pathname === '/dashboard/admin/assisted') return 'Assisted Delivery';
+    if (pathname === '/dashboard/admin/pricing') return 'Pricing Management';
     return 'Admin Dashboard';
   };
 
