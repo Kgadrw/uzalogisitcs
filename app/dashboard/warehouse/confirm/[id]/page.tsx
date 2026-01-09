@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import PageHeader from '@/components/PageHeader';
 import Card from '@/components/Card';
+import StatusBadge from '@/components/StatusBadge';
 import { HiOutlineXMark, HiOutlineCheck } from 'react-icons/hi2';
 
 export default function ConfirmGoodsPage() {
@@ -16,6 +17,7 @@ export default function ConfirmGoodsPage() {
     actualVolume: '',
     goodsCondition: '',
     notes: '',
+    status: 'Received at Warehouse', // Default status
   });
 
   // Mock shipment data - replace with API call
@@ -25,7 +27,17 @@ export default function ConfirmGoodsPage() {
     productName: 'Electronics',
     estimatedWeight: 150,
     estimatedCBM: 2.5,
+    currentStatus: 'In Transit to Warehouse', // Current status from database
   };
+
+  const statusOptions = [
+    'Waiting for Confirmation',
+    'In Transit to Warehouse',
+    'Received at Warehouse',
+    'Confirmed',
+    'In Transit',
+    'Delivered',
+  ];
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -34,8 +46,12 @@ export default function ConfirmGoodsPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Mock submission - replace with API call
-    console.log('Confirming goods:', { shipmentId: id, ...formData });
-    alert('Goods confirmed and client notified!');
+    console.log('Updating shipment status:', { 
+      shipmentId: id, 
+      status: formData.status,
+      ...formData 
+    });
+    alert(`Shipment status updated to "${formData.status}" and client notified!`);
     router.push('/dashboard/warehouse/incoming');
   };
 
@@ -44,7 +60,13 @@ export default function ConfirmGoodsPage() {
       
       <Card>
         <div className="mb-6">
-          <h3 className="text-primary text-lg font-semibold mb-4">Shipment Information</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-primary text-lg font-semibold">Shipment Information</h3>
+            <div className="flex items-center gap-2">
+              <span className="text-primary text-sm text-opacity-70">Current Status:</span>
+              <StatusBadge status={shipment.currentStatus} />
+            </div>
+          </div>
           <div className="space-y-2">
             <div className="flex justify-between">
               <span className="text-primary text-opacity-70">Client Name</span>
@@ -66,6 +88,25 @@ export default function ConfirmGoodsPage() {
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-primary mb-2">Update Shipment Status</label>
+            <select
+              value={formData.status}
+              onChange={(e) => handleInputChange('status', e.target.value)}
+              className="w-full border border-primary border-opacity-20 p-3 text-primary bg-secondary"
+              required
+            >
+              {statusOptions.map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
+            <p className="text-primary text-sm text-opacity-70 mt-2">
+              This status will be visible to the client
+            </p>
+          </div>
+          
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-primary mb-2">Actual Weight (kg)</label>

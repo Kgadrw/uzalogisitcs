@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { logout } from '@/lib/auth';
 import { UserRole } from '@/lib/auth';
-import { HiOutlineBell, HiOutlineArrowRightOnRectangle, HiOutlineCheckCircle } from 'react-icons/hi2';
+import StatusBadge from '@/components/StatusBadge';
+import { HiOutlineBell, HiOutlineArrowRightOnRectangle, HiOutlineCheckCircle, HiOutlineTrash } from 'react-icons/hi2';
 import { formatDate } from '@/lib/utils';
 
 interface TopbarProps {
@@ -32,6 +33,7 @@ export default function Topbar({ title, role, userName }: TopbarProps) {
           shipmentId: '1',
           clientName: 'John Doe',
           productName: 'Electronics',
+          status: 'Waiting for Confirmation',
           date: new Date('2024-01-25T10:30:00'),
           isNew: true,
         },
@@ -42,6 +44,7 @@ export default function Topbar({ title, role, userName }: TopbarProps) {
           shipmentId: '2',
           clientName: 'Jane Smith',
           productName: 'Furniture',
+          status: 'Waiting for Confirmation',
           date: new Date('2024-01-25T09:15:00'),
           isNew: true,
         },
@@ -52,6 +55,7 @@ export default function Topbar({ title, role, userName }: TopbarProps) {
           shipmentId: '3',
           clientName: 'Mike Johnson',
           productName: 'Clothing',
+          status: 'In Transit to Warehouse',
           date: new Date('2024-01-24T16:45:00'),
           isNew: false,
         },
@@ -62,6 +66,7 @@ export default function Topbar({ title, role, userName }: TopbarProps) {
           shipmentId: '4',
           clientName: 'Sarah Williams',
           productName: 'Electronics',
+          status: 'Received at Warehouse',
           date: new Date('2024-01-24T14:20:00'),
           isNew: false,
         },
@@ -74,6 +79,7 @@ export default function Topbar({ title, role, userName }: TopbarProps) {
           type: 'shipment_update',
           message: 'Your shipment #1 (Electronics) has been confirmed',
           shipmentId: '1',
+          status: 'Confirmed',
           date: new Date('2024-01-25T11:00:00'),
           isNew: true,
         },
@@ -82,6 +88,7 @@ export default function Topbar({ title, role, userName }: TopbarProps) {
           type: 'shipment_update',
           message: 'Your shipment #2 (Furniture) is in transit to warehouse',
           shipmentId: '2',
+          status: 'In Transit to Warehouse',
           date: new Date('2024-01-25T08:30:00'),
           isNew: true,
         },
@@ -90,6 +97,7 @@ export default function Topbar({ title, role, userName }: TopbarProps) {
           type: 'shipment_update',
           message: 'Your shipment #3 (Clothing) has been received',
           shipmentId: '3',
+          status: 'Received at Warehouse',
           date: new Date('2024-01-24T15:20:00'),
           isNew: false,
         },
@@ -98,6 +106,7 @@ export default function Topbar({ title, role, userName }: TopbarProps) {
           type: 'shipment_update',
           message: 'Cost adjustment for shipment #1: -$20',
           shipmentId: '1',
+          status: 'Confirmed',
           date: new Date('2024-01-24T12:00:00'),
           isNew: false,
         },
@@ -179,13 +188,16 @@ export default function Topbar({ title, role, userName }: TopbarProps) {
     );
   };
 
+  const deleteNotification = (id: string) => {
+    setNotifications(prev => prev.filter(notif => notif.id !== id));
+  };
+
   const roleLabel = 
     role === 'client' ? 'Client' :
     role === 'warehouse' ? 'Warehouse Partner' :
     'Admin';
 
   const newNotifications = notifications.filter(n => n.isNew);
-  const recentNotifications = notifications.filter(n => !n.isNew);
   const newCount = newNotifications.length;
 
   return (
@@ -252,7 +264,12 @@ export default function Topbar({ title, role, userName }: TopbarProps) {
                               className="flex-1"
                               onClick={() => setShowNotifications(false)}
                             >
-                              <p className="text-primary text-sm font-medium mb-1">{notification.message}</p>
+                              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                <p className="text-primary text-sm font-medium">{notification.message}</p>
+                                {notification.status && (
+                                  <StatusBadge status={notification.status} />
+                                )}
+                              </div>
                               <p className="text-primary text-xs text-opacity-70">
                                 {formatDate(notification.date)}
                               </p>
@@ -274,46 +291,6 @@ export default function Topbar({ title, role, userName }: TopbarProps) {
                   </div>
                 )}
 
-                {/* Recent Notifications */}
-                {recentNotifications.length > 0 && (
-                  <div className="p-4">
-                    <h4 className="text-primary text-sm font-semibold mb-3 flex items-center gap-2">
-                      <span className="w-2 h-2 bg-primary bg-opacity-30 rounded-full"></span>
-                      {role === 'warehouse' && `Recent Shipping (${recentNotifications.length})`}
-                      {role === 'client' && `Recent Updates (${recentNotifications.length})`}
-                      {role === 'admin' && `Recent Alerts (${recentNotifications.length})`}
-                    </h4>
-                    <div className="space-y-2">
-                      {recentNotifications.map((notification) => (
-                        <Link
-                          key={notification.id}
-                          href={
-                            role === 'warehouse' 
-                              ? `/dashboard/warehouse/confirm/${notification.shipmentId}`
-                              : role === 'client'
-                              ? `/dashboard/client/shipments/${notification.shipmentId}`
-                              : role === 'admin'
-                              ? notification.warehouseId 
-                                ? `/dashboard/admin/warehouses`
-                                : notification.clientId
-                                ? `/dashboard/admin/clients`
-                                : notification.shipmentId
-                                ? `/dashboard/admin/shipments`
-                                : '#'
-                              : '#'
-                          }
-                          className="block border border-primary border-opacity-10 p-3 rounded opacity-75 hover:opacity-100 hover:bg-primary hover:bg-opacity-5 transition-all"
-                          onClick={() => setShowNotifications(false)}
-                        >
-                          <p className="text-primary text-sm font-medium mb-1">{notification.message}</p>
-                          <p className="text-primary text-xs text-opacity-70">
-                            {formatDate(notification.date)}
-                          </p>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
 
                 {notifications.length === 0 && (
                   <div className="p-8 text-center">

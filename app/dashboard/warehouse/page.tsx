@@ -10,8 +10,10 @@ import {
   HiCube,
   HiUsers,
   HiBell,
-  HiCheckCircle
+  HiCheckCircle,
+  HiTrash
 } from 'react-icons/hi';
+import StatusBadge from '@/components/StatusBadge';
 import { formatDate } from '@/lib/utils';
 
 export default function WarehouseDashboard() {
@@ -32,6 +34,7 @@ export default function WarehouseDashboard() {
       shipmentId: '1',
       clientName: 'John Doe',
       productName: 'Electronics',
+      status: 'Waiting for Confirmation',
       date: new Date('2024-01-25T10:30:00'),
       isNew: true,
     },
@@ -42,6 +45,7 @@ export default function WarehouseDashboard() {
       shipmentId: '2',
       clientName: 'Jane Smith',
       productName: 'Furniture',
+      status: 'Waiting for Confirmation',
       date: new Date('2024-01-25T09:15:00'),
       isNew: true,
     },
@@ -52,6 +56,7 @@ export default function WarehouseDashboard() {
       shipmentId: '3',
       clientName: 'Mike Johnson',
       productName: 'Clothing',
+      status: 'In Transit to Warehouse',
       date: new Date('2024-01-24T16:45:00'),
       isNew: false,
     },
@@ -62,6 +67,7 @@ export default function WarehouseDashboard() {
       shipmentId: '4',
       clientName: 'Sarah Williams',
       productName: 'Electronics',
+      status: 'Received at Warehouse',
       date: new Date('2024-01-24T14:20:00'),
       isNew: false,
     },
@@ -75,8 +81,11 @@ export default function WarehouseDashboard() {
     );
   };
 
+  const deleteNotification = (id: string) => {
+    setNotifications(prev => prev.filter(notif => notif.id !== id));
+  };
+
   const newNotifications = notifications.filter(n => n.isNew);
-  const previousNotifications = notifications.filter(n => !n.isNew);
 
   return (
     <div>
@@ -140,7 +149,12 @@ export default function WarehouseDashboard() {
                         href={`/dashboard/warehouse/confirm/${notification.shipmentId}`}
                         className="block"
                       >
-                        <p className="text-primary font-medium mb-1">{notification.message}</p>
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="text-primary font-medium">{notification.message}</p>
+                          {notification.status && (
+                            <StatusBadge status={notification.status} />
+                          )}
+                        </div>
                         <p className="text-primary text-sm text-opacity-70">
                           {formatDate(notification.date)}
                         </p>
@@ -160,33 +174,6 @@ export default function WarehouseDashboard() {
           </div>
         )}
 
-        {/* Recent Shipping Notifications */}
-        {previousNotifications.length > 0 && (
-          <div>
-            <h3 className="text-primary text-lg font-semibold mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 bg-primary bg-opacity-30 rounded-full"></span>
-              Recent Shipping ({previousNotifications.length})
-            </h3>
-            <div className="space-y-3">
-              {previousNotifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className="border border-primary border-opacity-10 p-4 rounded opacity-75 hover:opacity-100 hover:bg-primary hover:bg-opacity-5 transition-all"
-                >
-                  <Link
-                    href={`/dashboard/warehouse/confirm/${notification.shipmentId}`}
-                    className="block"
-                  >
-                    <p className="text-primary font-medium mb-1">{notification.message}</p>
-                    <p className="text-primary text-sm text-opacity-70">
-                      {formatDate(notification.date)}
-                    </p>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {notifications.length === 0 && (
           <div className="text-center py-8">

@@ -16,10 +16,13 @@ export default function WarehouseDashboardLayout({
   const user = getCurrentUser();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     if (!user || user.role !== 'warehouse') {
       router.push('/auth/login/warehouse');
+      return;
     }
     // Load initial sidebar state
     const savedState = localStorage.getItem('sidebarCollapsed');
@@ -47,6 +50,10 @@ export default function WarehouseDashboardLayout({
   };
 
   const getMainContentMargin = () => {
+    // During SSR and initial render, use default desktop margin
+    if (!mounted) {
+      return '16rem';
+    }
     if (isMobile) {
       // On mobile, sidebar overlays when collapsed (0 margin), pushes content when expanded
       return sidebarCollapsed ? '0' : '16rem';

@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import PageHeader from '@/components/PageHeader';
 import Card from '@/components/Card';
 import StatusTimeline from '@/components/StatusTimeline';
+import StatusBadge from '@/components/StatusBadge';
 import { formatDate, formatCurrency } from '@/lib/utils';
 
 export default function ShipmentDetailsPage() {
@@ -38,6 +39,12 @@ export default function ShipmentDetailsPage() {
 
   return (
     <div>
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-primary text-2xl">Shipment #{id}</h2>
+          <StatusBadge status={shipment.status} />
+        </div>
+      </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div className="lg:col-span-2">

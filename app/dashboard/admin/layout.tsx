@@ -16,10 +16,13 @@ export default function AdminDashboardLayout({
   const user = getCurrentUser();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     if (!user || user.role !== 'admin') {
       router.push('/auth/login/admin');
+      return;
     }
     // Load initial sidebar state
     const savedState = localStorage.getItem('sidebarCollapsed');
@@ -50,6 +53,10 @@ export default function AdminDashboardLayout({
   };
 
   const getMainContentMargin = () => {
+    // During SSR and initial render, use default desktop margin
+    if (!mounted) {
+      return '16rem';
+    }
     if (isMobile) {
       // On mobile, sidebar overlays when collapsed (0 margin), pushes content when expanded
       return sidebarCollapsed ? '0' : '16rem';

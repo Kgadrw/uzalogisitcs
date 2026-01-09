@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { UserRole } from '@/lib/auth';
 import { 
@@ -13,7 +14,6 @@ import {
   HiOfficeBuilding,
   HiCube,
   HiPhone,
-  HiPaperAirplane,
   HiMenu,
   HiX,
   HiCurrencyDollar
@@ -104,8 +104,14 @@ export default function Sidebar({ role, onToggle }: SidebarProps) {
     >
       <div className={`p-6 ${isCollapsed ? 'px-4' : ''}`}>
         <div className={`mb-8 flex items-center gap-2 ${isCollapsed ? 'justify-center' : ''}`}>
-          <HiPaperAirplane className="w-6 h-6 text-secondary flex-shrink-0" />
-          {!isCollapsed && <h1 className="text-secondary text-xl">Uza Logistics</h1>}
+          <Image 
+            src="/logo.png" 
+            alt="Logistics" 
+            width={isCollapsed ? 32 : 40} 
+            height={isCollapsed ? 32 : 40}
+            className="flex-shrink-0"
+          />
+          {!isCollapsed && <h1 className="text-secondary text-xl">Logistics</h1>}
         </div>
         
         {/* Only show toggle button on mobile */}

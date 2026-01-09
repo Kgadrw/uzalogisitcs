@@ -11,7 +11,8 @@ import {
   HiPhone,
   HiExclamation,
   HiBell,
-  HiCheckCircle
+  HiCheckCircle,
+  HiTrash
 } from 'react-icons/hi';
 import { formatDate } from '@/lib/utils';
 
@@ -69,8 +70,11 @@ export default function AdminDashboard() {
     );
   };
 
+  const deleteNotification = (id: string) => {
+    setNotifications(prev => prev.filter(notif => notif.id !== id));
+  };
+
   const newNotifications = notifications.filter(n => n.isNew);
-  const recentNotifications = notifications.filter(n => !n.isNew);
 
   return (
     <div>
@@ -170,41 +174,6 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Recent Alerts */}
-        {recentNotifications.length > 0 && (
-          <div>
-            <h3 className="text-primary text-lg font-semibold mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 bg-primary bg-opacity-30 rounded-full"></span>
-              Recent Alerts ({recentNotifications.length})
-            </h3>
-            <div className="space-y-3">
-              {recentNotifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className="border border-primary border-opacity-10 p-4 rounded opacity-75 hover:opacity-100 hover:bg-primary hover:bg-opacity-5 transition-all"
-                >
-                  <Link
-                    href={
-                      notification.warehouseId 
-                        ? '/dashboard/admin/warehouses'
-                        : notification.clientId
-                        ? '/dashboard/admin/clients'
-                        : notification.shipmentId
-                        ? '/dashboard/admin/shipments'
-                        : '#'
-                    }
-                    className="block"
-                  >
-                    <p className="text-primary font-medium mb-1">{notification.message}</p>
-                    <p className="text-primary text-sm text-opacity-70">
-                      {formatDate(notification.date)}
-                    </p>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {notifications.length === 0 && (
           <div className="text-center py-8">

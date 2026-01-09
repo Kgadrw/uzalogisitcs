@@ -10,8 +10,10 @@ import {
   HiCurrencyDollar,
   HiChat,
   HiBell,
-  HiCheckCircle
+  HiCheckCircle,
+  HiTrash
 } from 'react-icons/hi';
+import StatusBadge from '@/components/StatusBadge';
 import { formatDate } from '@/lib/utils';
 
 export default function ClientDashboard() {
@@ -22,6 +24,7 @@ export default function ClientDashboard() {
       type: 'shipment_update',
       message: 'Your shipment #1 (Electronics) has been confirmed',
       shipmentId: '1',
+      status: 'Confirmed',
       date: new Date('2024-01-25T11:00:00'),
       isNew: true,
     },
@@ -30,6 +33,7 @@ export default function ClientDashboard() {
       type: 'shipment_update',
       message: 'Your shipment #2 (Furniture) is in transit to warehouse',
       shipmentId: '2',
+      status: 'In Transit to Warehouse',
       date: new Date('2024-01-25T08:30:00'),
       isNew: true,
     },
@@ -38,6 +42,7 @@ export default function ClientDashboard() {
       type: 'shipment_update',
       message: 'Your shipment #3 (Clothing) has been received',
       shipmentId: '3',
+      status: 'Received at Warehouse',
       date: new Date('2024-01-24T15:20:00'),
       isNew: false,
     },
@@ -46,6 +51,7 @@ export default function ClientDashboard() {
       type: 'shipment_update',
       message: 'Cost adjustment for shipment #1: -$20',
       shipmentId: '1',
+      status: 'Confirmed',
       date: new Date('2024-01-24T12:00:00'),
       isNew: false,
     },
@@ -59,8 +65,11 @@ export default function ClientDashboard() {
     );
   };
 
+  const deleteNotification = (id: string) => {
+    setNotifications(prev => prev.filter(notif => notif.id !== id));
+  };
+
   const newNotifications = notifications.filter(n => n.isNew);
-  const recentNotifications = notifications.filter(n => !n.isNew);
 
   return (
     <div>
@@ -146,7 +155,12 @@ export default function ClientDashboard() {
                         href={`/dashboard/client/shipments/${notification.shipmentId}`}
                         className="block"
                       >
-                        <p className="text-primary font-medium mb-1">{notification.message}</p>
+                        <div className="flex items-center gap-2 mb-1">
+                          <p className="text-primary font-medium">{notification.message}</p>
+                          {notification.status && (
+                            <StatusBadge status={notification.status} />
+                          )}
+                        </div>
                         <p className="text-primary text-sm text-opacity-70">
                           {formatDate(notification.date)}
                         </p>
@@ -166,33 +180,6 @@ export default function ClientDashboard() {
           </div>
         )}
 
-        {/* Recent Updates */}
-        {recentNotifications.length > 0 && (
-          <div>
-            <h3 className="text-primary text-lg font-semibold mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 bg-primary bg-opacity-30 rounded-full"></span>
-              Recent Updates ({recentNotifications.length})
-            </h3>
-            <div className="space-y-3">
-              {recentNotifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className="border border-primary border-opacity-10 p-4 rounded opacity-75 hover:opacity-100 hover:bg-primary hover:bg-opacity-5 transition-all"
-                >
-                  <Link
-                    href={`/dashboard/client/shipments/${notification.shipmentId}`}
-                    className="block"
-                  >
-                    <p className="text-primary font-medium mb-1">{notification.message}</p>
-                    <p className="text-primary text-sm text-opacity-70">
-                      {formatDate(notification.date)}
-                    </p>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {notifications.length === 0 && (
           <div className="text-center py-8">

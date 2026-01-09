@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import PageHeader from '@/components/PageHeader';
 import Table, { TableRow, TableCell } from '@/components/Table';
+import StatusBadge from '@/components/StatusBadge';
 import { formatDate } from '@/lib/utils';
 import { HiOutlineEye } from 'react-icons/hi2';
 
@@ -24,6 +25,22 @@ const shipments = [
     estimatedWeight: 300,
     estimatedCBM: 5.0,
   },
+  {
+    id: '3',
+    productName: 'Clothing',
+    status: 'Waiting for Confirmation',
+    submittedDate: new Date('2024-01-22'),
+    estimatedWeight: 50,
+    estimatedCBM: 1.0,
+  },
+  {
+    id: '4',
+    productName: 'Books',
+    status: 'Received at Warehouse',
+    submittedDate: new Date('2024-01-18'),
+    estimatedWeight: 100,
+    estimatedCBM: 2.0,
+  },
 ];
 
 export default function ShipmentsPage() {
@@ -34,7 +51,9 @@ export default function ShipmentsPage() {
         {shipments.map((shipment) => (
           <TableRow key={shipment.id}>
             <TableCell>{shipment.productName}</TableCell>
-            <TableCell>{shipment.status}</TableCell>
+            <TableCell>
+              <StatusBadge status={shipment.status} />
+            </TableCell>
             <TableCell>{formatDate(shipment.submittedDate)}</TableCell>
             <TableCell>{shipment.estimatedWeight}</TableCell>
             <TableCell>{shipment.estimatedCBM}</TableCell>

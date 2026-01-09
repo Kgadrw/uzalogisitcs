@@ -6,7 +6,7 @@ import PageHeader from '@/components/PageHeader';
 import StepForm from '@/components/StepForm';
 import Card from '@/components/Card';
 import { formatCurrency } from '@/lib/utils';
-import { HiOutlineCheckCircle } from 'react-icons/hi2';
+import { HiOutlineCheckCircle, HiOutlineXMark, HiOutlinePhoto } from 'react-icons/hi2';
 
 export default function NewShipmentPage() {
   const router = useRouter();
@@ -20,6 +20,7 @@ export default function NewShipmentPage() {
     estimatedVolume: '',
     packagingType: '',
     specialHandling: [] as string[],
+    productImages: [] as File[],
     
     // Step 2: Location
     country: '',
@@ -31,6 +32,8 @@ export default function NewShipmentPage() {
     // Step 3: Warehouse
     selectedWarehouse: null as any,
   });
+
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const warehouses = [
     {
@@ -70,6 +73,29 @@ export default function NewShipmentPage() {
     });
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      const newImages = [...formData.productImages, ...files];
+      setFormData((prev) => ({ ...prev, productImages: newImages }));
+
+      // Create previews
+      const newPreviews = files.map(file => URL.createObjectURL(file));
+      setImagePreviews((prev) => [...prev, ...newPreviews]);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const newImages = formData.productImages.filter((_, i) => i !== index);
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+    
+    // Revoke object URL to free memory
+    URL.revokeObjectURL(imagePreviews[index]);
+    
+    setFormData((prev) => ({ ...prev, productImages: newImages }));
+    setImagePreviews(newPreviews);
+  };
+
   const calculateCost = () => {
     const weight = parseFloat(formData.estimatedWeight) || 0;
     const volume = parseFloat(formData.estimatedVolume) || 0;
@@ -86,7 +112,18 @@ export default function NewShipmentPage() {
 
   const handleSubmit = () => {
     // Mock submission - replace with API call
-    console.log('Submitting shipment:', formData);
+    console.log('Submitting shipment:', {
+      ...formData,
+      productImages: formData.productImages.map((file, index) => ({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+      })),
+    });
+    
+    // Clean up object URLs
+    imagePreviews.forEach(url => URL.revokeObjectURL(url));
+    
     alert('Shipment submitted successfully!');
     router.push('/dashboard/client/shipments');
   };
@@ -189,6 +226,60 @@ export default function NewShipmentPage() {
               </label>
             ))}
           </div>
+        </div>
+
+        <div>
+          <label className="block text-primary mb-2">Product Images</label>
+          <p className="text-primary text-sm text-opacity-70 mb-3">
+            Upload images of your product to help warehouse verify the goods upon receipt
+          </p>
+          
+          <div className="border border-primary border-opacity-20 border-dashed rounded p-4">
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImageUpload}
+              className="hidden"
+              id="product-images-upload"
+            />
+            <label
+              htmlFor="product-images-upload"
+              className="flex flex-col items-center justify-center cursor-pointer py-4"
+            >
+              <HiOutlinePhoto className="w-8 h-8 text-primary text-opacity-50 mb-2" />
+              <span className="text-primary text-sm">Click to upload images</span>
+              <span className="text-primary text-xs text-opacity-70 mt-1">
+                PNG, JPG, GIF up to 10MB each
+              </span>
+            </label>
+          </div>
+
+          {imagePreviews.length > 0 && (
+            <div className="mt-4">
+              <p className="text-primary text-sm mb-3">
+                Uploaded Images ({imagePreviews.length})
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {imagePreviews.map((preview, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={preview}
+                      alt={`Product ${index + 1}`}
+                      className="w-full h-32 object-cover border border-primary border-opacity-20 rounded"
+                    />
+                    <button
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Remove image"
+                    >
+                      <HiOutlineXMark className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </Card>

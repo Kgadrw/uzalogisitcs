@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { setCurrentUser } from '@/lib/auth';
-import { HiOutlinePaperAirplane, HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineArrowRightOnRectangle } from 'react-icons/hi2';
+import { HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineArrowRightOnRectangle } from 'react-icons/hi2';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -29,13 +30,17 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-secondary flex items-center justify-center p-4">
       <div className="w-full max-w-md border border-primary border-opacity-20 p-8">
         <div className="flex items-center justify-center gap-2 mb-4">
-          <HiOutlinePaperAirplane className="w-8 h-8 text-primary" />
-          <h1 className="text-primary text-3xl">Uza Logistics</h1>
+          <Image 
+            src="/logo.png" 
+            alt="Logistics" 
+            width={48} 
+            height={48}
+            className="flex-shrink-0"
+          />
+          <h1 className="text-primary text-3xl">Logistics</h1>
         </div>
-        <p className="text-primary text-opacity-70 text-center mb-2">Admin Portal</p>
-        <p className="text-primary text-opacity-70 text-center mb-8">Sign in to your account</p>
         
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-6 mt-8">
           <div>
             <label className="flex items-center gap-2 text-primary mb-2">
               <HiOutlineEnvelope className="w-4 h-4" />

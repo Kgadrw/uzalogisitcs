@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import PageHeader from '@/components/PageHeader';
 import Table, { TableRow, TableCell } from '@/components/Table';
+import StatusBadge from '@/components/StatusBadge';
 import { formatDate } from '@/lib/utils';
 import { HiOutlineEye, HiOutlineCheckCircle } from 'react-icons/hi2';
 
@@ -43,7 +44,9 @@ export default function IncomingShipmentsPage() {
             <TableCell>{shipment.estimatedCBM}</TableCell>
             <TableCell>{shipment.pickupLocation}</TableCell>
             <TableCell>{formatDate(shipment.arrivalDate)}</TableCell>
-            <TableCell>{shipment.status}</TableCell>
+            <TableCell>
+              <StatusBadge status={shipment.status} />
+            </TableCell>
             <TableCell>
               <div className="flex gap-2">
                 <Link
