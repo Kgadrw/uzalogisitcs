@@ -8,13 +8,13 @@ interface TableProps {
 export default function Table({ headers, children }: TableProps) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full border-collapse">
+      <table className="w-full border-collapse border border-primary border-opacity-20">
         <thead>
-          <tr className="bg-primary bg-opacity-5">
+          <tr>
             {headers.map((header, index) => (
               <th
                 key={index}
-                className="border border-primary border-opacity-20 px-4 py-3 text-left text-primary"
+                className="px-6 py-4 text-left text-sm font-semibold text-primary border border-primary border-opacity-20"
               >
                 {header}
               </th>
@@ -30,14 +30,15 @@ export default function Table({ headers, children }: TableProps) {
 interface TableRowProps {
   children: ReactNode;
   onClick?: () => void;
+  className?: string;
 }
 
-export function TableRow({ children, onClick }: TableRowProps) {
+export function TableRow({ children, onClick, className = '' }: TableRowProps) {
   return (
     <tr
-      className={`border-b border-primary border-opacity-20 ${
-        onClick ? 'cursor-pointer hover:bg-primary hover:bg-opacity-5' : ''
-      }`}
+      className={`transition-all duration-200 hover:bg-primary hover:bg-opacity-5 ${
+        onClick ? 'cursor-pointer' : ''
+      } ${className}`}
       onClick={onClick}
     >
       {children}
@@ -52,7 +53,7 @@ interface TableCellProps {
 
 export function TableCell({ children, className = '' }: TableCellProps) {
   return (
-    <td className={`px-4 py-3 text-primary ${className}`}>
+    <td className={`px-6 py-4 text-sm text-primary border border-primary border-opacity-20 ${className}`}>
       {children}
     </td>
   );

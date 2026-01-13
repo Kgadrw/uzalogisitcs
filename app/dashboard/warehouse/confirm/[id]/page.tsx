@@ -6,11 +6,13 @@ import PageHeader from '@/components/PageHeader';
 import Card from '@/components/Card';
 import StatusBadge from '@/components/StatusBadge';
 import { HiOutlineXMark, HiOutlineCheck } from 'react-icons/hi2';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function ConfirmGoodsPage() {
   const params = useParams();
   const id = params.id as string;
   const router = useRouter();
+  const { showSuccess } = useToast();
   
   const [formData, setFormData] = useState({
     actualWeight: '',
@@ -50,7 +52,7 @@ export default function ConfirmGoodsPage() {
       shipmentId: id, 
       ...formData 
     });
-    alert(`Shipment status updated to "${formData.status}" and client notified!`);
+    showSuccess(`Shipment status updated to "${formData.status}" and client notified!`);
     router.push('/dashboard/warehouse/incoming');
   };
 

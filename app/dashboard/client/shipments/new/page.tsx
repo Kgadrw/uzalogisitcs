@@ -7,6 +7,7 @@ import StepForm from '@/components/StepForm';
 import Card from '@/components/Card';
 import { formatCurrency } from '@/lib/utils';
 import { HiOutlineCheckCircle, HiOutlineXMark, HiOutlinePhoto } from 'react-icons/hi2';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function NewShipmentPage() {
   const router = useRouter();
@@ -125,7 +126,7 @@ export default function NewShipmentPage() {
     // Clean up object URLs
     imagePreviews.forEach(url => URL.revokeObjectURL(url));
     
-    alert('Shipment submitted successfully!');
+    showSuccess('Shipment submitted successfully!');
     router.push('/dashboard/client/shipments');
   };
 

@@ -2,42 +2,75 @@ interface StatusBadgeProps {
   status: string;
 }
 
-export default function StatusBadge({ status }: StatusBadgeProps) {
-  const getStatusColor = (status: string) => {
+export function getStatusTextColor(status: string): string {
     const normalizedStatus = status.toLowerCase();
     
-    // Waiting/Pending statuses - Red
+  // Waiting/Pending statuses - Red text
     if (normalizedStatus.includes('waiting') || 
         normalizedStatus.includes('pending') ||
         normalizedStatus === 'submitted') {
-      return 'bg-red-500 text-white';
+    return 'text-red-600';
     }
     
-    // Confirmed statuses - Green
+  // Confirmed statuses - Green text
     if (normalizedStatus.includes('confirmed') || 
         normalizedStatus.includes('completed') ||
         normalizedStatus.includes('delivered')) {
-      return 'bg-green-500 text-white';
+    return 'text-green-600';
     }
     
-    // In Transit statuses - Yellow/Orange
+  // In Transit statuses - Yellow/Orange text
     if (normalizedStatus.includes('transit') || 
         normalizedStatus.includes('shipping')) {
-      return 'bg-yellow-500 text-white';
+    return 'text-yellow-600';
     }
     
-    // Received statuses - Blue
+  // Received statuses - Blue text
     if (normalizedStatus.includes('received') || 
         normalizedStatus.includes('at warehouse')) {
-      return 'bg-blue-500 text-white';
+    return 'text-blue-600';
+  }
+  
+  // Default - Gray text
+  return 'text-gray-600';
+}
+
+export function getStatusBackgroundColor(status: string): string {
+  const normalizedStatus = status.toLowerCase();
+  
+  // Waiting/Pending statuses - Red background (lighter)
+  if (normalizedStatus.includes('waiting') || 
+      normalizedStatus.includes('pending') ||
+      normalizedStatus === 'submitted') {
+    return 'bg-red-50';
     }
     
-    // Default - Gray
-    return 'bg-gray-500 text-white';
-  };
+  // Confirmed statuses - Green background (lighter)
+  if (normalizedStatus.includes('confirmed') || 
+      normalizedStatus.includes('completed') ||
+      normalizedStatus.includes('delivered')) {
+    return 'bg-green-50';
+  }
+  
+  // In Transit statuses - Yellow/Orange background (lighter)
+  if (normalizedStatus.includes('transit') || 
+      normalizedStatus.includes('shipping')) {
+    return 'bg-yellow-50';
+  }
+  
+  // Received statuses - Blue background (lighter)
+  if (normalizedStatus.includes('received') || 
+      normalizedStatus.includes('at warehouse')) {
+    return 'bg-blue-50';
+  }
+  
+  // Default - Gray background (lighter)
+  return 'bg-gray-50';
+}
 
+export default function StatusBadge({ status }: StatusBadgeProps) {
   return (
-    <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(status)}`}>
+    <span className={`text-sm font-medium ${getStatusTextColor(status)}`}>
       {status}
     </span>
   );

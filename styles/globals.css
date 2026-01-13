@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
 /* Font face - uncomment when font files are added to public/fonts/
 @font-face {
   font-family: 'Elms Sans';
@@ -26,8 +41,48 @@ body {
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #0F172A;
+  color: #4B5563; /* Gray text color */
   background-color: #FFFFFF;
+}
+
+/* Make text-primary class use gray for text only (not affecting bg-primary) */
+.text-primary {
+  color: #4B5563;
+}
+
+/* Titles and headings use dark primary color (sidebar color) with better visibility */
+h1, h2, h3, h4, h5, h6 {
+  color: #0F172A !important;
+  font-weight: 600 !important;
+}
+
+/* Title classes use dark primary color with better visibility */
+.text-xl, .text-2xl, .text-3xl, .text-lg {
+  color: #0F172A !important;
+  font-weight: 600 !important;
+}
+
+/* Icons use dark primary color (sidebar color) by default - make them more visible */
+svg:not(.text-secondary):not([class*="text-secondary"]) {
+  color: #0F172A;
+}
+
+/* Override icons in text-primary context to use dark color */
+.text-primary svg:not(.text-secondary):not([class*="text-secondary"]) {
+  color: #0F172A;
+}
+
+/* Make icons more prominent and visible */
+svg[class*="w-"]:not(.text-secondary):not([class*="text-secondary"]) {
+  color: #0F172A;
+}
+
+/* Sidebar icons should be white - ensure they stay white */
+.text-secondary svg,
+svg.text-secondary,
+.bg-primary svg.text-secondary,
+.bg-primary .text-secondary svg {
+  color: #FFFFFF !important;
 }
 
 /* Apply system font to all elements */

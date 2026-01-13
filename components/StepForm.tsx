@@ -56,6 +56,7 @@ export default function StepForm({ steps, onSubmit, submitLabel = 'Submit' }: St
         ))}
       </div>
 
+      {/* Step content */}
       <div className="mb-6">{steps[currentStep].component}</div>
 
       <div className="flex justify-between">

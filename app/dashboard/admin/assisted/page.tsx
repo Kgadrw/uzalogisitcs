@@ -41,6 +41,7 @@ const assistedDeliveries = [
 
 export default function AssistedDeliveryPage() {
   const router = useRouter();
+  const { showSuccess } = useToast();
   const [showCreateForm, setShowCreateForm] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -72,7 +73,7 @@ export default function AssistedDeliveryPage() {
     e.preventDefault();
     // Mock submission - replace with API call
     console.log('Creating assisted shipment:', formData);
-    alert('Shipment created successfully! Client will receive updates via SMS/Email.');
+    showSuccess('Shipment created successfully! Client will receive updates via SMS/Email.');
     setShowCreateForm(false);
     // Reset form
     setFormData({

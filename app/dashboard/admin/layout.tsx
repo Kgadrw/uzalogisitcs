@@ -61,18 +61,21 @@ export default function AdminDashboardLayout({
       // On mobile, sidebar overlays when collapsed (0 margin), pushes content when expanded
       return sidebarCollapsed ? '0' : '16rem';
     }
-    // On desktop, always expanded (16rem = 256px = w-64) - no collapse option
-    return '16rem';
+    // On desktop, adjust margin based on collapsed state
+    // 16rem = 256px (w-64) when expanded, 5rem = 80px (w-20) when collapsed
+    return sidebarCollapsed ? '5rem' : '16rem';
   };
 
   // Prevent hydration mismatch by ensuring consistent initial render
   if (!mounted) {
+    const savedState = typeof window !== 'undefined' ? localStorage.getItem('sidebarCollapsed') : null;
+    const initialCollapsed = savedState === 'true';
     return (
       <div className="flex min-h-screen bg-secondary">
         <Sidebar role="admin" onToggle={setSidebarCollapsed} />
         <div 
           className="flex-1 flex flex-col transition-all duration-300"
-          style={{ marginLeft: '16rem' }}
+          style={{ marginLeft: initialCollapsed ? '5rem' : '16rem' }}
         >
           <Topbar title={getPageTitle()} role="admin" userName={user.name} />
           <main className="flex-1 p-4 md:p-6 overflow-y-auto">{children}</main>

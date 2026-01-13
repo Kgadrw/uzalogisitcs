@@ -7,9 +7,12 @@ import StepForm from '@/components/StepForm';
 import Card from '@/components/Card';
 import { formatCurrency } from '@/lib/utils';
 import { HiOutlineCheckCircle } from 'react-icons/hi2';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function NewShipmentPage() {
   const router = useRouter();
+  const { showSuccess } = useToast();
+  const { showSuccess } = useToast();
   
   const [formData, setFormData] = useState({
     // Step 1: Goods Details
@@ -87,7 +90,7 @@ export default function NewShipmentPage() {
   const handleSubmit = () => {
     // Mock submission - replace with API call
     console.log('Submitting shipment:', formData);
-    alert('Shipment submitted successfully!');
+    showSuccess('Shipment submitted successfully!');
     router.push('/client/shipments');
   };
 

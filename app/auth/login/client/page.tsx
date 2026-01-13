@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { setCurrentUser } from '@/lib/auth';
 import { HiOutlineEnvelope, HiOutlineLockClosed, HiOutlineArrowRightOnRectangle } from 'react-icons/hi2';
@@ -77,6 +78,15 @@ export default function ClientLoginPage() {
             <span>Sign In</span>
           </button>
         </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-primary text-sm text-opacity-70">
+            Don't have an account?{' '}
+            <Link href="/auth/register" className="text-primary underline hover:text-opacity-70">
+              Create Account
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

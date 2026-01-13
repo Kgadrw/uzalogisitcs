@@ -14,10 +14,9 @@ import {
   HiOfficeBuilding,
   HiCube,
   HiPhone,
-  HiMenu,
-  HiX,
   HiCurrencyDollar
 } from 'react-icons/hi';
+import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi2';
 
 interface SidebarProps {
   role: UserRole;
@@ -48,40 +47,34 @@ export default function Sidebar({ role, onToggle }: SidebarProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   // Check if mobile on mount and resize
   useEffect(() => {
+    setMounted(true);
     const checkMobile = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      // On desktop, always keep expanded
-      if (!mobile) {
-        setCollapsed(false);
-        onToggle?.(false);
-      }
     };
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, [onToggle]);
+  }, []);
 
-  // Load collapsed state from localStorage on mount (only for mobile)
+  // Load collapsed state from localStorage on mount (after hydration)
   useEffect(() => {
-    if (isMobile) {
-      const savedState = localStorage.getItem('sidebarCollapsed');
-      if (savedState !== null) {
-        const isCollapsed = savedState === 'true';
-        setCollapsed(isCollapsed);
-        onToggle?.(isCollapsed);
-      }
+    if (!mounted) return;
+    
+    const savedState = localStorage.getItem('sidebarCollapsed');
+    if (savedState !== null) {
+      const isCollapsed = savedState === 'true';
+      setCollapsed(isCollapsed);
+      onToggle?.(isCollapsed);
     }
-  }, [isMobile, onToggle]);
+  }, [mounted, onToggle]);
 
   const toggleSidebar = () => {
-    // Only allow toggle on mobile
-    if (!isMobile) return;
-    
     const newState = !collapsed;
     setCollapsed(newState);
     localStorage.setItem('sidebarCollapsed', newState.toString());
@@ -93,43 +86,42 @@ export default function Sidebar({ role, onToggle }: SidebarProps) {
     role === 'warehouse' ? warehouseNavItems :
     adminNavItems;
 
-  // On desktop, always expanded. On mobile, use collapsed state
-  const isCollapsed = isMobile && collapsed;
-
   return (
     <div 
       className={`fixed left-0 top-0 h-screen bg-primary overflow-y-auto z-20 transition-all duration-300 ${
-        isCollapsed ? 'w-20' : 'w-64'
+        collapsed ? 'w-20' : 'w-64'
       }`}
     >
-      <div className={`p-6 ${isCollapsed ? 'px-4' : ''}`}>
-        <div className={`mb-8 flex items-center gap-2 ${isCollapsed ? 'justify-center' : ''}`}>
-          <div className={`flex-shrink-0 ${isCollapsed ? 'w-8 h-8' : 'w-10 h-10'}`}>
-            <Image 
-              src="/logo.png" 
-              alt="Logistics" 
-              width={40} 
-              height={40}
-              className="w-full h-full object-contain"
-            />
-          </div>
-          {!isCollapsed && <h1 className="text-secondary text-xl">Logistics</h1>}
-        </div>
-        
-        {/* Only show toggle button on mobile */}
-        {isMobile && (
+      <div className={`p-6 ${collapsed ? 'px-4' : ''}`}>
+        <div className={`mb-8 flex items-center gap-2 ${collapsed ? 'justify-center' : 'justify-between'}`}>
+          {!collapsed && (
+            <div className="flex-shrink-0 w-16 h-16">
+              <Image 
+                src="/logo.png" 
+                alt="Logo" 
+                width={64} 
+                height={64}
+                className="w-full h-full object-contain"
+              />
+            </div>
+          )}
+          
+          {/* Toggle button - always visible */}
           <button
             onClick={toggleSidebar}
-            className="mb-4 w-full flex items-center justify-center p-2 text-secondary hover:bg-secondary hover:bg-opacity-10 rounded transition-colors"
+            className={`flex items-center justify-center p-2 text-secondary hover:bg-secondary hover:bg-opacity-10 rounded transition-colors ${
+              collapsed ? 'w-full' : ''
+            }`}
             aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {collapsed ? (
-              <HiMenu className="w-6 h-6" />
+              <HiOutlineChevronRight className="w-5 h-5 text-secondary" />
             ) : (
-              <HiX className="w-6 h-6" />
+              <HiOutlineChevronLeft className="w-5 h-5 text-secondary" />
             )}
           </button>
-        )}
+        </div>
 
         <nav className="space-y-2">
           {navItems.map((item) => {
@@ -147,16 +139,16 @@ export default function Sidebar({ role, onToggle }: SidebarProps) {
                 key={item.href}
                 href={item.href}
                 className={`flex items-center gap-3 px-4 py-3 text-secondary transition-colors rounded ${
-                  isCollapsed ? 'justify-center' : ''
+                  collapsed ? 'justify-center' : ''
                 } ${
                   isActive 
                     ? 'bg-secondary bg-opacity-10 border-l-4 border-secondary' 
                     : 'hover:bg-secondary hover:bg-opacity-5'
                 }`}
-                title={isCollapsed ? item.label : undefined}
+                title={collapsed ? item.label : undefined}
               >
-                <Icon className="w-5 h-5 flex-shrink-0" />
-                {!isCollapsed && <span className="whitespace-nowrap">{item.label}</span>}
+                <Icon className="w-5 h-5 flex-shrink-0 text-secondary" />
+                {!collapsed && <span className="whitespace-nowrap">{item.label}</span>}
               </Link>
             );
           })}

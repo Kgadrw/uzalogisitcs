@@ -5,11 +5,13 @@ import { useRouter, useParams } from 'next/navigation';
 import PageHeader from '@/components/PageHeader';
 import Card from '@/components/Card';
 import { HiOutlineXMark, HiOutlineCheck } from 'react-icons/hi2';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function ConfirmGoodsPage() {
   const params = useParams();
   const id = params.id as string;
   const router = useRouter();
+  const { showSuccess } = useToast();
   
   const [formData, setFormData] = useState({
     actualWeight: '',
@@ -35,7 +37,7 @@ export default function ConfirmGoodsPage() {
     e.preventDefault();
     // Mock submission - replace with API call
     console.log('Confirming goods:', { shipmentId: id, ...formData });
-    alert('Goods confirmed and client notified!');
+    showSuccess('Goods confirmed and client notified!');
     router.push('/warehouse/incoming');
   };
 
