@@ -2,6 +2,7 @@ import { Warehouse, WarehouseStatus, CreateWarehouseAccountRequest, WarehouseAcc
 import { WarehouseModel } from '../models/Warehouse';
 import { ShipmentModel } from '../models/Shipment';
 import { UserModel } from '../models/User';
+import bcrypt from 'bcrypt';
 
 export class WarehouseService {
   static async getAllWarehouses(): Promise<Warehouse[]> {
@@ -101,14 +102,14 @@ export class WarehouseService {
       status: 'active', // Admin creates it, so it's immediately active
     });
 
-    // Create warehouse user account
-    // In production, hash the password: const hashedPassword = await bcrypt.hash(data.password, 10);
+    // Create warehouse user account with hashed password
+    const hashedPassword = await bcrypt.hash(data.password, 10);
     const warehouseUser = await UserModel.create({
       name: data.contactName,
       email: data.email,
       phone: data.contactPhone,
       role: 'warehouse',
-      password: data.password, // In production, store hashed password
+      password: hashedPassword,
     });
 
     return {

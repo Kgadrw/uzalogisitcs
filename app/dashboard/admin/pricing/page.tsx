@@ -76,14 +76,14 @@ export default function PricingManagementPage() {
 
   return (
     <div>
-      <PageHeader description="Manage pricing settings for transport fees, handling fees, and warehouse storage rates." />
+      <PageHeader />
       
       {/* Global Pricing Settings */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <Card>
           <div className="flex items-center gap-3 mb-4">
             <HiTruck className="w-6 h-6 text-primary" />
-            <h3 className="text-primary text-xl font-semibold">Transport Fee</h3>
+            <h3 className="text-primary text-xl">Transport Fee</h3>
           </div>
           <div className="space-y-4">
             <div>
@@ -110,7 +110,7 @@ export default function PricingManagementPage() {
         <Card>
           <div className="flex items-center gap-3 mb-4">
             <HiCog className="w-6 h-6 text-primary" />
-            <h3 className="text-primary text-xl font-semibold">Handling Fee</h3>
+            <h3 className="text-primary text-xl">Handling Fee</h3>
           </div>
           <div className="space-y-4">
             <div>
@@ -139,7 +139,7 @@ export default function PricingManagementPage() {
       <Card>
         <div className="flex items-center gap-3 mb-6">
           <HiCube className="w-6 h-6 text-primary" />
-          <h3 className="text-primary text-xl font-semibold">Warehouse Storage Pricing</h3>
+          <h3 className="text-primary text-xl">Warehouse Storage Pricing</h3>
         </div>
         
         <div className="space-y-4">
@@ -150,7 +150,7 @@ export default function PricingManagementPage() {
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <h4 className="text-primary text-lg font-medium mb-1">{warehouse.name}</h4>
+                  <h4 className="text-primary text-lg mb-1">{warehouse.name}</h4>
                   <p className="text-primary text-sm text-opacity-70">{warehouse.location}</p>
                 </div>
                 <div className="flex items-center gap-4">
@@ -191,7 +191,7 @@ export default function PricingManagementPage() {
                   ) : (
                     <>
                       <div className="text-right">
-                        <p className="text-primary text-2xl font-semibold">
+                        <p className="text-primary text-2xl">
                           {formatCurrency(warehouse.pricePerCBM)}
                         </p>
                         <p className="text-primary text-xs text-opacity-70">per CBM</p>
@@ -215,7 +215,7 @@ export default function PricingManagementPage() {
       <Card className="mt-6">
         <div className="flex items-center gap-3 mb-4">
           <HiCurrencyDollar className="w-6 h-6 text-primary" />
-          <h3 className="text-primary text-xl font-semibold">Pricing Calculation</h3>
+          <h3 className="text-primary text-xl">Pricing Calculation</h3>
         </div>
         <div className="bg-primary bg-opacity-5 p-4 rounded">
           <p className="text-primary text-sm mb-2">
@@ -230,7 +230,7 @@ export default function PricingManagementPage() {
           <p className="text-primary text-sm text-opacity-70">
             Handling Fee = {formatCurrency(pricing.handlingFee)} (fixed)
           </p>
-          <p className="text-primary text-sm font-medium mt-3">
+          <p className="text-primary text-sm mt-3">
             Total = Transport Fee + Storage Fee + Handling Fee
           </p>
         </div>

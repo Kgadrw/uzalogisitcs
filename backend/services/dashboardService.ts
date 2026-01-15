@@ -12,7 +12,8 @@ export class DashboardService {
     const allShipments = await ShipmentModel.findAll();
     const activeWarehouses = await WarehouseModel.findActive();
     const clients = await UserModel.getClients();
-    const assistedClients = clients.filter(c => c.status === 'active').length; // Simplified
+    // All registered clients are considered active for now
+    const assistedClients = clients.length;
 
     // Count pending issues (shipments with issues or warehouses pending approval)
     const pendingWarehouses = await WarehouseModel.findByStatus('pending');

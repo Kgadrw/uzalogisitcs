@@ -434,7 +434,7 @@ export default function NewShipmentPage() {
       <Card className="mb-6">
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <label className="block text-primary mb-2 font-medium">
+            <label className="block text-primary mb-2">
               Select Warehouse <span className="text-red-500">*</span>
             </label>
             <p className="text-primary text-sm text-opacity-70 mb-3">
@@ -459,8 +459,8 @@ export default function NewShipmentPage() {
           </div>
           {formData.selectedWarehouse && (
             <div className="ml-4 p-4 bg-primary bg-opacity-5 rounded border border-primary border-opacity-20">
-              <p className="text-primary text-sm font-medium mb-1">Selected:</p>
-              <p className="text-primary font-semibold">{formData.selectedWarehouse.name}</p>
+              <p className="text-primary text-sm mb-1">Selected:</p>
+              <p className="text-primary">{formData.selectedWarehouse.name}</p>
               <p className="text-primary text-sm text-opacity-70">{formData.selectedWarehouse.location}</p>
               <button
                 onClick={() => handleInputChange('selectedWarehouse', null)}

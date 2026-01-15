@@ -71,7 +71,7 @@ export default function ShipmentsPage() {
                 className="group"
               >
                 <TableCell>
-                  <div className="font-medium text-primary">{shipment.productName}</div>
+                  <div className="text-primary">{shipment.productName}</div>
                 </TableCell>
                 <TableCell>
                   <StatusBadge status={shipment.status} />
@@ -109,7 +109,7 @@ export default function ShipmentsPage() {
           <div className="mb-6">
             <HiOutlineTruck className="w-16 h-16 text-primary text-opacity-40" />
           </div>
-          <h3 className="text-xl font-semibold text-primary mb-2">No Shipments Yet</h3>
+          <h3 className="text-xl text-primary mb-2">No Shipments Yet</h3>
           <p className="text-primary text-opacity-70 text-center max-w-md mb-8">
             You haven't created any shipments yet. Get started by creating your first shipment request.
           </p>

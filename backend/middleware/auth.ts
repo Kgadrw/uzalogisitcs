@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { User, UserRole } from '../types';
+import { AuthService } from '../services/authService';
+import { UserModel } from '../models/User';
 
 // Extend Express Request to include user
 declare global {
@@ -10,40 +12,43 @@ declare global {
   }
 }
 
-// Mock JWT verification - replace with actual JWT implementation
-export function verifyToken(token: string): User | null {
-  // In production, verify JWT token here
-  // For now, return mock user
+export async function authenticate(req: Request, res: Response, next: NextFunction) {
   try {
-    // Decode and verify token
-    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // return decoded as User;
-    return null; // Placeholder
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        error: 'Authentication required',
+      });
+    }
+
+    // Verify token
+    const tokenData = AuthService.verifyToken(token);
+    if (!tokenData) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid or expired token',
+      });
+    }
+
+    // Get full user data from database
+    const user = await UserModel.findById(tokenData.id);
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: 'User not found',
+      });
+    }
+
+    req.user = user;
+    next();
   } catch (error) {
-    return null;
-  }
-}
-
-export function authenticate(req: Request, res: Response, next: NextFunction) {
-  const token = req.headers.authorization?.replace('Bearer ', '');
-  
-  if (!token) {
-    return res.status(401).json({
+    return res.status(500).json({
       success: false,
-      error: 'Authentication required',
+      error: 'Failed to authenticate user',
     });
   }
-
-  const user = verifyToken(token);
-  if (!user) {
-    return res.status(401).json({
-      success: false,
-      error: 'Invalid or expired token',
-    });
-  }
-
-  req.user = user;
-  next();
 }
 
 export function authorize(...roles: UserRole[]) {

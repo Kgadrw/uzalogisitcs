@@ -133,7 +133,7 @@ export default function WarehouseManagementPage() {
   return (
     <div>
       <div className="mb-6 flex justify-between items-center">
-        <PageHeader title="Warehouse Management" />
+        <PageHeader title="Warehouse" />
         <button
           onClick={() => setShowCreateForm(true)}
           className="flex items-center gap-2 px-6 py-2 bg-primary text-secondary hover:bg-opacity-90"
@@ -148,7 +148,7 @@ export default function WarehouseManagementPage() {
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-2">
               <HiOutlineCheckCircle className="w-6 h-6 text-green-500" />
-              <h3 className="text-primary text-xl font-semibold">Warehouse Account Created Successfully!</h3>
+              <h3 className="text-primary text-xl">Warehouse Account Created Successfully!</h3>
             </div>
             <button
               onClick={() => {
@@ -162,7 +162,7 @@ export default function WarehouseManagementPage() {
           </div>
           
           <div className="bg-primary bg-opacity-5 p-4 rounded mb-4">
-            <p className="text-primary text-sm mb-3 font-medium">
+            <p className="text-primary text-sm mb-3">
               Please provide these credentials to <strong>{generatedCredentials.warehouseName}</strong>:
             </p>
             
@@ -216,7 +216,7 @@ export default function WarehouseManagementPage() {
       {showCreateForm && (
         <Card className="mb-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-primary text-2xl font-semibold">Create Warehouse Account</h2>
+            <h2 className="text-primary text-2xl">Create Warehouse Account</h2>
             <button
               onClick={() => setShowCreateForm(false)}
               className="text-primary hover:text-opacity-70"
@@ -227,7 +227,7 @@ export default function WarehouseManagementPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <h3 className="text-primary text-lg font-semibold mb-4">Warehouse Information</h3>
+              <h3 className="text-primary text-lg mb-4">Warehouse Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-primary mb-2">Warehouse Name <span className="text-red-500">*</span></label>
@@ -312,7 +312,7 @@ export default function WarehouseManagementPage() {
             </div>
 
             <div>
-              <h3 className="text-primary text-lg font-semibold mb-4">Services Offered</h3>
+              <h3 className="text-primary text-lg mb-4">Services Offered</h3>
               <div className="flex flex-wrap gap-3">
                 {['Storage', 'Handling', 'Packaging', 'Shipping', 'Customs'].map((service) => (
                   <label key={service} className="flex items-center">
@@ -329,7 +329,7 @@ export default function WarehouseManagementPage() {
             </div>
 
             <div>
-              <h3 className="text-primary text-lg font-semibold mb-4">Contact Information</h3>
+              <h3 className="text-primary text-lg mb-4">Contact Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-primary mb-2">Contact Person Name <span className="text-red-500">*</span></label>

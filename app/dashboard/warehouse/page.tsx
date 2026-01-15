@@ -8,12 +8,8 @@ import {
   HiTruck, 
   HiClock, 
   HiCube,
-  HiUsers,
-  HiBell,
-  HiCheckCircle,
-  HiTrash
+  HiUsers
 } from 'react-icons/hi';
-import StatusBadge from '@/components/StatusBadge';
 import { formatDate } from '@/lib/utils';
 
 export default function WarehouseDashboard() {
@@ -25,67 +21,33 @@ export default function WarehouseDashboard() {
     activeClients: 28,
   };
 
-  // Mock notifications data - replace with API call
-  const [notifications, setNotifications] = useState([
+  // Mock recent actions data - replace with API call
+  const [recentActions] = useState([
     {
       id: '1',
-      type: 'new_shipping',
-      message: 'New shipment from John Doe - Electronics',
+      action: 'Confirmed shipment #1 from John Doe (Electronics)',
       shipmentId: '1',
-      clientName: 'John Doe',
-      productName: 'Electronics',
-      status: 'Waiting for Confirmation',
       date: new Date('2024-01-25T10:30:00'),
-      isNew: true,
     },
     {
       id: '2',
-      type: 'new_shipping',
-      message: 'New shipment from Jane Smith - Furniture',
+      action: 'Updated status for shipment #2 to "In Transit to Warehouse"',
       shipmentId: '2',
-      clientName: 'Jane Smith',
-      productName: 'Furniture',
-      status: 'Waiting for Confirmation',
       date: new Date('2024-01-25T09:15:00'),
-      isNew: true,
     },
     {
       id: '3',
-      type: 'new_shipping',
-      message: 'New shipment from Mike Johnson - Clothing',
+      action: 'Viewed incoming shipment #3 details',
       shipmentId: '3',
-      clientName: 'Mike Johnson',
-      productName: 'Clothing',
-      status: 'In Transit to Warehouse',
       date: new Date('2024-01-24T16:45:00'),
-      isNew: false,
     },
     {
       id: '4',
-      type: 'new_shipping',
-      message: 'New shipment from Sarah Williams - Electronics',
+      action: 'Confirmed shipment #4 from Sarah Williams (Electronics)',
       shipmentId: '4',
-      clientName: 'Sarah Williams',
-      productName: 'Electronics',
-      status: 'Received at Warehouse',
       date: new Date('2024-01-24T14:20:00'),
-      isNew: false,
     },
   ]);
-
-  const markAsRead = (id: string) => {
-    setNotifications(prev => 
-      prev.map(notif => 
-        notif.id === id ? { ...notif, isNew: false } : notif
-      )
-    );
-  };
-
-  const deleteNotification = (id: string) => {
-    setNotifications(prev => prev.filter(notif => notif.id !== id));
-  };
-
-  const newNotifications = notifications.filter(n => n.isNew);
 
   return (
     <div>
@@ -123,61 +85,35 @@ export default function WarehouseDashboard() {
         </Card>
       </div>
 
-      {/* Notifications Section */}
+      {/* Recent Actions Section */}
       <Card>
         <div className="flex items-center gap-2 mb-6">
-          <HiBell className="w-6 h-6 text-primary" />
-          <h2 className="text-primary text-2xl">Notifications</h2>
+          <HiClock className="w-6 h-6 text-primary" />
+          <h2 className="text-primary text-2xl">Recent Actions</h2>
         </div>
 
-        {/* New Shipping Notifications */}
-        {newNotifications.length > 0 && (
-          <div className="mb-8">
-            <h3 className="text-primary text-lg font-semibold mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              New Shipping ({newNotifications.length})
-            </h3>
-            <div className="space-y-3">
-              {newNotifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className="border border-primary border-opacity-20 p-4 rounded hover:bg-primary hover:bg-opacity-5 transition-colors"
+        {recentActions.length > 0 ? (
+          <div className="space-y-3">
+            {recentActions.map((action) => (
+              <div
+                key={action.id}
+                className="border border-primary border-opacity-20 p-4 rounded hover:bg-primary hover:bg-opacity-5 transition-colors"
+              >
+                <Link
+                  href={`/dashboard/warehouse/confirm/${action.shipmentId}`}
+                  className="block"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <Link
-                        href={`/dashboard/warehouse/confirm/${notification.shipmentId}`}
-                        className="block"
-                      >
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="text-primary font-medium">{notification.message}</p>
-                          {notification.status && (
-                            <StatusBadge status={notification.status} />
-                          )}
-                        </div>
-                        <p className="text-primary text-sm text-opacity-70">
-                          {formatDate(notification.date)}
-                        </p>
-                      </Link>
-                    </div>
-                    <button
-                      onClick={() => markAsRead(notification.id)}
-                      className="ml-4 p-2 text-primary hover:bg-primary hover:bg-opacity-10 rounded transition-colors"
-                      title="Mark as read"
-                    >
-                      <HiCheckCircle className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  <p className="text-primary mb-1">{action.action}</p>
+                  <p className="text-primary text-sm text-opacity-70">
+                    {formatDate(action.date)}
+                  </p>
+                </Link>
+              </div>
+            ))}
           </div>
-        )}
-
-
-        {notifications.length === 0 && (
+        ) : (
           <div className="text-center py-8">
-            <p className="text-primary text-opacity-70">No notifications available</p>
+            <p className="text-primary text-opacity-70">No recent actions</p>
           </div>
         )}
       </Card>

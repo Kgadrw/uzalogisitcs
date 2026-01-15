@@ -31,7 +31,7 @@ export default function StatusTimeline({ statuses }: StatusTimelineProps) {
           </div>
           <div className="flex-1 pt-1">
             <div
-              className={`font-medium ${
+              className={`${
                 status.completed ? 'text-primary' : 'text-primary text-opacity-50'
               }`}
             >

@@ -7,6 +7,8 @@ import { connectDatabase, disconnectDatabase } from './config/database';
 import routes from './routes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { AuthService } from './services/authService';
+// Import schemas to ensure they're registered with mongoose
+import './schemas';
 
 // Load environment variables
 dotenv.config();

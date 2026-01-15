@@ -46,23 +46,23 @@ export default function ConfirmGoodsPage() {
       
       <Card>
         <div className="mb-6">
-          <h3 className="text-primary text-lg font-semibold mb-4">Shipment Information</h3>
+          <h3 className="text-primary text-lg mb-4">Shipment Information</h3>
           <div className="space-y-2">
             <div className="flex justify-between">
               <span className="text-primary text-opacity-70">Client Name</span>
-              <span className="text-primary font-semibold">{shipment.clientName}</span>
+              <span className="text-primary">{shipment.clientName}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-primary text-opacity-70">Product Name</span>
-              <span className="text-primary font-semibold">{shipment.productName}</span>
+              <span className="text-primary">{shipment.productName}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-primary text-opacity-70">Estimated Weight</span>
-              <span className="text-primary font-semibold">{shipment.estimatedWeight} kg</span>
+              <span className="text-primary">{shipment.estimatedWeight} kg</span>
             </div>
             <div className="flex justify-between">
               <span className="text-primary text-opacity-70">Estimated CBM</span>
-              <span className="text-primary font-semibold">{shipment.estimatedCBM}</span>
+              <span className="text-primary">{shipment.estimatedCBM}</span>
             </div>
           </div>
         </div>

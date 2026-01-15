@@ -44,7 +44,7 @@ export default function ClientManagementPage() {
       </div>
       
       <Card>
-        <h3 className="text-primary text-xl font-semibold mb-4">All Clients</h3>
+        <h3 className="text-primary text-xl mb-4">All Clients</h3>
         <Table headers={['Client Name', 'Email', 'Phone', 'Shipments', 'Status', 'Actions']}>
           {clients.map((client) => (
             <TableRow key={client.id}>
@@ -88,15 +88,15 @@ export default function ClientManagementPage() {
       
       {selectedClient && (
         <Card className="mt-6">
-          <h3 className="text-primary text-xl font-semibold mb-4">Client Details</h3>
+          <h3 className="text-primary text-xl mb-4">Client Details</h3>
           <div className="space-y-3">
             <div className="flex justify-between">
               <span className="text-primary text-opacity-70">Client ID</span>
-              <span className="text-primary font-semibold">{selectedClient}</span>
+              <span className="text-primary">{selectedClient}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-primary text-opacity-70">Shipment History</span>
-              <span className="text-primary font-semibold">View All</span>
+              <span className="text-primary">View All</span>
             </div>
             <div className="flex justify-between">
               <span className="text-primary text-opacity-70">Send Message</span>

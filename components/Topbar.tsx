@@ -2,11 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { logout } from '@/lib/auth';
 import { UserRole } from '@/lib/auth';
 import StatusBadge from '@/components/StatusBadge';
-import { HiOutlineBell, HiOutlineArrowRightOnRectangle, HiOutlineCheckCircle, HiOutlineTrash } from 'react-icons/hi2';
+import { HiOutlineBell, HiOutlineCheckCircle, HiOutlineTrash } from 'react-icons/hi2';
 import { formatDate } from '@/lib/utils';
 
 interface TopbarProps {
@@ -16,7 +14,6 @@ interface TopbarProps {
 }
 
 export default function Topbar({ title, role, userName }: TopbarProps) {
-  const router = useRouter();
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
   const notificationRef = useRef<HTMLDivElement>(null);
@@ -168,18 +165,6 @@ export default function Topbar({ title, role, userName }: TopbarProps) {
     };
   }, [showNotifications]);
 
-  const handleLogout = () => {
-    logout();
-    // Redirect to role-specific login page
-    if (role === 'client') {
-      router.push('/auth/login/client');
-    } else if (role === 'warehouse') {
-      router.push('/auth/login/warehouse');
-    } else {
-      router.push('/auth/login/admin');
-    }
-  };
-
   const markAsRead = (id: string) => {
     setNotifications(prev => 
       prev.map(notif => 
@@ -225,14 +210,14 @@ export default function Topbar({ title, role, userName }: TopbarProps) {
           {showNotifications && (
             <div className="absolute right-0 mt-2 w-80 md:w-96 bg-secondary border border-primary border-opacity-20 rounded shadow-lg max-h-96 overflow-y-auto z-50">
               <div className="p-4 border-b border-primary border-opacity-20">
-                <h3 className="text-primary text-lg font-semibold">Notifications</h3>
+                <h3 className="text-primary text-lg">Notifications</h3>
               </div>
               
               <div className="max-h-80 overflow-y-auto">
                 {/* New Notifications */}
                 {newNotifications.length > 0 && (
                   <div className="p-4 border-b border-primary border-opacity-10">
-                    <h4 className="text-primary text-sm font-semibold mb-3 flex items-center gap-2">
+                    <h4 className="text-primary text-sm mb-3 flex items-center gap-2">
                       <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                       {role === 'warehouse' && `New Shipping (${newNotifications.length})`}
                       {role === 'client' && `New Updates (${newNotifications.length})`}
@@ -265,7 +250,7 @@ export default function Topbar({ title, role, userName }: TopbarProps) {
                               onClick={() => setShowNotifications(false)}
                             >
                               <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                <p className="text-primary text-sm font-medium">{notification.message}</p>
+                                <p className="text-primary text-sm">{notification.message}</p>
                                 {notification.status && (
                                   <StatusBadge status={notification.status} />
                                 )}
@@ -301,13 +286,6 @@ export default function Topbar({ title, role, userName }: TopbarProps) {
             </div>
           )}
         </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 px-3 md:px-4 py-2 bg-primary text-secondary hover:bg-opacity-90 transition-colors"
-        >
-          <HiOutlineArrowRightOnRectangle className="w-4 h-4" />
-          <span className="hidden sm:inline">Logout</span>
-        </button>
       </div>
     </div>
   );

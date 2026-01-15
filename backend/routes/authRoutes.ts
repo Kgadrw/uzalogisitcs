@@ -1,8 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { ApiResponse } from '../types';
 import { UserModel } from '../models/User';
-// import bcrypt from 'bcrypt';
-// import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import { AuthService } from '../services/authService';
 
 const router = Router();
 
@@ -42,8 +42,8 @@ router.post('/register', async (req: Request, res: Response) => {
       });
     }
 
-    // Hash password (in production, use bcrypt)
-    // const hashedPassword = await bcrypt.hash(password, 10);
+    // Hash password with bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create client account
     const user = await UserModel.create({
@@ -51,15 +51,11 @@ router.post('/register', async (req: Request, res: Response) => {
       email: email.toLowerCase(),
       phone: phone || undefined,
       role: 'client',
-      password: password, // In production, use hashedPassword
+      password: hashedPassword,
     });
 
-    // Generate JWT token (in production)
-    // const token = jwt.sign(
-    //   { id: user.id, email: user.email, role: user.role },
-    //   process.env.JWT_SECRET!,
-    //   { expiresIn: '7d' }
-    // );
+    // Generate JWT token
+    const token = AuthService.generateToken(user);
 
     const response: ApiResponse<{ user: typeof user; token: string }> = {
       success: true,
@@ -71,7 +67,7 @@ router.post('/register', async (req: Request, res: Response) => {
           role: user.role,
           phone: user.phone,
         } as any,
-        token: 'mock_token', // Replace with actual JWT
+        token,
       },
       message: 'Account created successfully',
     };
@@ -96,9 +92,6 @@ router.post('/login', async (req: Request, res: Response) => {
       });
     }
 
-    // Import AuthService dynamically to avoid circular dependency
-    const { AuthService } = await import('../services/authService');
-    
     // Verify credentials
     const user = await AuthService.verifyCredentials(email, password);
     if (!user) {
@@ -108,18 +101,14 @@ router.post('/login', async (req: Request, res: Response) => {
       });
     }
 
-    // Generate JWT token (in production)
-    // const token = jwt.sign(
-    //   { id: user.id, email: user.email, role: user.role },
-    //   process.env.JWT_SECRET!,
-    //   { expiresIn: '7d' }
-    // );
+    // Generate JWT token
+    const token = AuthService.generateToken(user);
 
     const response: ApiResponse<{ user: typeof user; token: string }> = {
       success: true,
       data: {
         user,
-        token: 'mock_token', // Replace with actual JWT
+        token,
       },
     };
 
@@ -151,14 +140,26 @@ router.get('/me', async (req: Request, res: Response) => {
       });
     }
 
-    // Verify token and get user (in production)
-    // const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    // const user = await UserModel.findById(decoded.id);
+    // Verify token and get user
+    const tokenData = AuthService.verifyToken(token);
+    if (!tokenData) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid or expired token',
+      });
+    }
 
-    // For now, return mock response
-    const response: ApiResponse<null> = {
-      success: false,
-      error: 'Not implemented',
+    const user = await UserModel.findById(tokenData.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found',
+      });
+    }
+
+    const response: ApiResponse<typeof user> = {
+      success: true,
+      data: user,
     };
     res.json(response);
   } catch (error: any) {

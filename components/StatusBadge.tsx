@@ -70,7 +70,7 @@ export function getStatusBackgroundColor(status: string): string {
 
 export default function StatusBadge({ status }: StatusBadgeProps) {
   return (
-    <span className={`text-sm font-medium ${getStatusTextColor(status)}`}>
+    <span className={`text-sm ${getStatusTextColor(status)}`}>
       {status}
     </span>
   );

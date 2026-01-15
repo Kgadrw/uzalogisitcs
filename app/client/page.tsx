@@ -13,9 +13,9 @@ import {
 export default function ClientDashboard() {
   return (
     <div>
-      <PageHeader description="Welcome. Create, track, and manage your shipments in one place." />
+      <PageHeader />
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Link href="/client/shipments/new">
           <Card className="cursor-pointer hover:border-primary">
             <div className="flex items-start gap-4">

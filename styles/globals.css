@@ -53,13 +53,13 @@ body {
 /* Titles and headings use dark primary color (sidebar color) with better visibility */
 h1, h2, h3, h4, h5, h6 {
   color: #0F172A !important;
-  font-weight: 600 !important;
+  font-weight: 400 !important;
 }
 
 /* Title classes use dark primary color with better visibility */
 .text-xl, .text-2xl, .text-3xl, .text-lg {
   color: #0F172A !important;
-  font-weight: 600 !important;
+  font-weight: 400 !important;
 }
 
 /* Icons use dark primary color (sidebar color) by default - make them more visible */

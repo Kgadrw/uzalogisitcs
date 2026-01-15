@@ -1,5 +1,8 @@
 import { UserModel } from '../models/User';
-// import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { appConfig } from '../config/app';
+import { User } from '../types';
 
 export class AuthService {
   /**
@@ -18,13 +21,13 @@ export class AuthService {
         return;
       }
 
-      // Create default admin
-      // In production, hash the password: const hashedPassword = await bcrypt.hash('Admin123!', 10);
+      // Create default admin with hashed password
+      const hashedPassword = await bcrypt.hash('Admin123!', 10);
       await UserModel.create({
         name: 'System Administrator',
         email: adminEmail,
         role: 'admin',
-        password: 'Admin123!', // In production, use hashedPassword
+        password: hashedPassword,
       });
 
       console.log('✅ Default admin account created');
@@ -45,14 +48,9 @@ export class AuthService {
       return null;
     }
 
-    // In production, verify password with bcrypt
-    // const isValid = await bcrypt.compare(password, user.password);
-    // if (!isValid) return null;
-
-    // For now, simple comparison (NOT FOR PRODUCTION)
-    if (user.password !== password) {
-      return null;
-    }
+    // Verify password with bcrypt
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) return null;
 
     return {
       id: user.id,
@@ -61,5 +59,40 @@ export class AuthService {
       role: user.role,
       phone: user.phone,
     };
+  }
+
+  /**
+   * Generate JWT token for user
+   */
+  static generateToken(user: User): string {
+    return jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      appConfig.jwtSecret,
+      { expiresIn: appConfig.jwtExpiresIn }
+    );
+  }
+
+  /**
+   * Verify JWT token and return user data
+   */
+  static verifyToken(token: string): User | null {
+    try {
+      const decoded = jwt.verify(token, appConfig.jwtSecret) as {
+        id: string;
+        email: string;
+        role: string;
+      };
+      return {
+        id: decoded.id,
+        email: decoded.email,
+        role: decoded.role as any,
+        name: '', // Will be fetched from DB if needed
+        phone: undefined,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+    } catch (error) {
+      return null;
+    }
   }
 }

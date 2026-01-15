@@ -51,17 +51,17 @@ export default function ClientDashboardLayout({
   };
 
   const getMainContentMargin = () => {
-    // During SSR and initial render, use default desktop margin
+    // During SSR and initial render, use default desktop margin to match server render
     if (!mounted) {
-      return '16rem';
+      return '14rem';
     }
     if (isMobile) {
       // On mobile, sidebar overlays when collapsed (0 margin), pushes content when expanded
-      return sidebarCollapsed ? '0' : '16rem';
+      return sidebarCollapsed ? '0' : '14rem';
     }
     // On desktop, adjust margin based on collapsed state
-    // 16rem = 256px (w-64) when expanded, 5rem = 80px (w-20) when collapsed
-    return sidebarCollapsed ? '5rem' : '16rem';
+    // 14rem = 224px (w-56) when expanded, 5rem = 80px (w-20) when collapsed
+    return sidebarCollapsed ? '5rem' : '14rem';
   };
 
   return (

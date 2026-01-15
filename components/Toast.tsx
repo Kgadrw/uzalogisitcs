@@ -63,7 +63,7 @@ export function ToastItem({ toast, onClose }: ToastProps) {
       role="alert"
     >
       <div className="flex-shrink-0">{getIcon()}</div>
-      <p className="flex-1 text-sm font-medium">{toast.message}</p>
+      <p className="flex-1 text-sm">{toast.message}</p>
       <button
         onClick={() => onClose(toast.id)}
         className="flex-shrink-0 hover:bg-white hover:bg-opacity-20 rounded p-1 transition-colors"

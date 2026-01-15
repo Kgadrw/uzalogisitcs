@@ -90,7 +90,7 @@ export default function ClientRegisterPage() {
           <h1 className="text-primary text-3xl">Logistics</h1>
         </div>
         
-        <h2 className="text-primary text-xl font-semibold mb-2 text-center">Create Client Account</h2>
+        <h2 className="text-primary text-xl mb-2 text-center">Create Client Account</h2>
         <p className="text-primary text-sm text-opacity-70 mb-6 text-center">
           Sign up to start managing your shipments
         </p>

@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { UserRole } from '@/lib/auth';
+import { usePathname, useRouter } from 'next/navigation';
+import { UserRole, logout } from '@/lib/auth';
 import { 
   HiHome, 
   HiTruck, 
@@ -16,7 +16,7 @@ import {
   HiPhone,
   HiCurrencyDollar
 } from 'react-icons/hi';
-import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi2';
+import { HiOutlineChevronLeft, HiOutlineChevronRight, HiOutlineArrowRightOnRectangle } from 'react-icons/hi2';
 
 interface SidebarProps {
   role: UserRole;
@@ -37,7 +37,7 @@ const warehouseNavItems = [
 const adminNavItems = [
   { href: '/dashboard/admin', label: 'Dashboard', icon: HiHome },
   { href: '/dashboard/admin/clients', label: 'Client Management', icon: HiUsers },
-  { href: '/dashboard/admin/warehouses', label: 'Warehouse Management', icon: HiOfficeBuilding },
+  { href: '/dashboard/admin/warehouses', label: 'Warehouse', icon: HiOfficeBuilding },
   { href: '/dashboard/admin/shipments', label: 'All Shipments', icon: HiCube },
   { href: '/dashboard/admin/assisted', label: 'Assisted Delivery', icon: HiPhone },
   { href: '/dashboard/admin/pricing', label: 'Pricing Management', icon: HiCurrencyDollar },
@@ -45,11 +45,13 @@ const adminNavItems = [
 
 export default function Sidebar({ role, onToggle }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  // Always start with false to match server render
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Check if mobile on mount and resize
+  // Check if mobile on mount and resize, and load localStorage state
   useEffect(() => {
     setMounted(true);
     const checkMobile = () => {
@@ -59,20 +61,17 @@ export default function Sidebar({ role, onToggle }: SidebarProps) {
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Load collapsed state from localStorage on mount (after hydration)
-  useEffect(() => {
-    if (!mounted) return;
     
+    // Load collapsed state from localStorage after mount (client-side only)
     const savedState = localStorage.getItem('sidebarCollapsed');
     if (savedState !== null) {
       const isCollapsed = savedState === 'true';
       setCollapsed(isCollapsed);
       onToggle?.(isCollapsed);
     }
-  }, [mounted, onToggle]);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [onToggle]);
 
   const toggleSidebar = () => {
     const newState = !collapsed;
@@ -81,20 +80,36 @@ export default function Sidebar({ role, onToggle }: SidebarProps) {
     onToggle?.(newState);
   };
 
+  const handleLogout = () => {
+    logout();
+    // Redirect to role-specific login page
+    if (role === 'client') {
+      router.push('/auth/login/client');
+    } else if (role === 'warehouse') {
+      router.push('/auth/login/warehouse');
+    } else {
+      router.push('/auth/login/admin');
+    }
+  };
+
   const navItems = 
     role === 'client' ? clientNavItems :
     role === 'warehouse' ? warehouseNavItems :
     adminNavItems;
 
+  // Use mounted state to prevent hydration mismatch
+  // Always render with default width (expanded) on server and initial client render
+  // Only after mount and if collapsed, switch to collapsed width
+  // This ensures server and client initial HTML match exactly
+  const sidebarWidth = mounted && collapsed ? 'w-20' : 'w-56';
+  
   return (
     <div 
-      className={`fixed left-0 top-0 h-screen bg-primary overflow-y-auto z-20 transition-all duration-300 ${
-        collapsed ? 'w-20' : 'w-64'
-      }`}
+      className={`fixed left-0 top-0 h-screen bg-primary overflow-y-auto z-20 transition-all duration-300 flex flex-col ${sidebarWidth}`}
     >
-      <div className={`p-6 ${collapsed ? 'px-4' : ''}`}>
-        <div className={`mb-8 flex items-center gap-2 ${collapsed ? 'justify-center' : 'justify-between'}`}>
-          {!collapsed && (
+      <div className={`p-3 flex flex-col h-full ${mounted && collapsed ? 'px-2' : ''}`}>
+        <div className={`mb-8 flex items-center gap-2 ${mounted && collapsed ? 'justify-center' : 'justify-between'}`}>
+          {!(mounted && collapsed) && (
             <div className="flex-shrink-0 w-16 h-16">
               <Image 
                 src="/logo.png" 
@@ -110,12 +125,12 @@ export default function Sidebar({ role, onToggle }: SidebarProps) {
           <button
             onClick={toggleSidebar}
             className={`flex items-center justify-center p-2 text-secondary hover:bg-secondary hover:bg-opacity-10 rounded transition-colors ${
-              collapsed ? 'w-full' : ''
+              mounted && collapsed ? 'w-full' : ''
             }`}
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-label={mounted && collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title={mounted && collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
-            {collapsed ? (
+            {mounted && collapsed ? (
               <HiOutlineChevronRight className="w-5 h-5 text-secondary" />
             ) : (
               <HiOutlineChevronLeft className="w-5 h-5 text-secondary" />
@@ -123,7 +138,7 @@ export default function Sidebar({ role, onToggle }: SidebarProps) {
           </button>
         </div>
 
-        <nav className="space-y-2">
+        <nav className="space-y-2 flex-1">
           {navItems.map((item) => {
             // Improved active state detection
             const isExactMatch = pathname === item.href;
@@ -138,21 +153,35 @@ export default function Sidebar({ role, onToggle }: SidebarProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 text-secondary transition-colors rounded ${
-                  collapsed ? 'justify-center' : ''
+                className={`flex items-center gap-3 px-2 py-3 text-secondary transition-colors rounded ${
+                  mounted && collapsed ? 'justify-center' : ''
                 } ${
                   isActive 
                     ? 'bg-secondary bg-opacity-10 border-l-4 border-secondary' 
                     : 'hover:bg-secondary hover:bg-opacity-5'
                 }`}
-                title={collapsed ? item.label : undefined}
+                title={mounted && collapsed ? item.label : undefined}
               >
                 <Icon className="w-5 h-5 flex-shrink-0 text-secondary" />
-                {!collapsed && <span className="whitespace-nowrap">{item.label}</span>}
+                {!(mounted && collapsed) && <span className="whitespace-nowrap">{item.label}</span>}
               </Link>
             );
           })}
         </nav>
+
+        {/* Logout Button */}
+        <div className="mt-auto pt-4 border-t border-secondary border-opacity-20">
+          <button
+            onClick={handleLogout}
+            className={`w-full flex items-center gap-3 px-2 py-3 text-secondary transition-colors rounded hover:bg-secondary hover:bg-opacity-10 ${
+              mounted && collapsed ? 'justify-center' : ''
+            }`}
+            title={mounted && collapsed ? 'Logout' : undefined}
+          >
+            <HiOutlineArrowRightOnRectangle className="w-5 h-5 flex-shrink-0 text-secondary" />
+            {!(mounted && collapsed) && <span className="whitespace-nowrap">Logout</span>}
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -92,7 +92,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             {(toast.type === 'info' || !toast.type) && (
               <HiInformationCircle className="w-5 h-5 flex-shrink-0" />
             )}
-            <p className="flex-1 text-sm font-medium">{toast.message}</p>
+            <p className="flex-1 text-sm">{toast.message}</p>
             <button
               onClick={() => removeToast(toast.id)}
               className="flex-shrink-0 hover:bg-white hover:bg-opacity-20 rounded p-1 transition-colors"
